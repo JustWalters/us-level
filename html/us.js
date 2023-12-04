@@ -582,7 +582,7 @@ const 颜色 = ['#F9CDC7', '#C5F9CB', '#CDE8F4', '#FDE8C4', '#D0DCD7', '#E1CEF5'
 const 颜色_randomizer = Math.floor(Math.random() * 7);
 如何做爱元素.style.backgroundColor = 颜色[颜色_randomizer]
 添加事件监控(如何做爱元素,'click',e=>{
-    if (e.target == 文档.body) {
+        if (e.target == 文档.body) {
         const 颜色a = Math.floor(Math.random() * 50) + 176;
         const 颜色b = Math.floor(Math.random() * 50) + 176;
         const 颜色c = Math.floor(Math.random() * 50) + 176;
@@ -611,14 +611,32 @@ const 保存等级们 = _=>{
     本地存储.setItem(本地存储等级们钥匙,本地存储value);
 };
 const 省等级们正则 = /^[\d|-]{56}$/;
-const 获取等级们并生效 = _=>{
-    const 等级们字串 = 本地存储.getItem(本地存储等级们钥匙);
+const applyLevelsToElements = (等级们字串) => {
     if(!省等级们正则.test(等级们字串)) return;
     const 等级们 = 等级们字串.split('');
     获取所有省元素们().forEach((元素,下标)=>{
         元素.setAttribute('level',等级们[下标]=='-'?'0':等级们[下标])
         if (等级们[下标]=='-') 元素.setAttribute('alt', true);
     })
+};
+
+const 获取等级们并生效 = _=>{
+    const 等级们字串 = 本地存储.getItem(本地存储等级们钥匙);
+    applyLevelsToElements(等级们字串);
+};
+
+const applyLevelsFromUrl = _=>{
+    const url = new URL(视窗.location.href);
+    const 等级们字串 = url.searchParams.get('l');
+    applyLevelsToElements(等级们字串);
+};
+const addStateToUrl = _=>{
+    const 等级们字串 = 本地存储.getItem(本地存储等级们钥匙);
+    if (!省等级们正则.test(等级们字串)) return;
+
+    const url = new URL(视窗.location.href);
+    url.searchParams.set('l', 等级们字串);
+    视窗.history.replaceState(null, '', url);
 };
 const 图形 = 文档.querySelector('svg');
 const 设置等级样式 = 设置等级.style;
@@ -834,6 +852,8 @@ const 保存图像 = _=>{
 };
 
 添加事件监控(保存,'click',保存图像);
+添加事件监控(share,'click',addStateToUrl);
+添加事件监控(load,'click',applyLevelsFromUrl);
 
 添加事件监控(输出图像.querySelector('a'),'click',_=>{
     输出图像.style.display = 'none'
